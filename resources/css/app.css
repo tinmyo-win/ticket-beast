@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .custom-prose-table {
+    border: solid 1px gray;
+    color: red;
+    /* padding: 6px; */
+  }
+}
