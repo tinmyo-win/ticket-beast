@@ -49,6 +49,6 @@ class DatabaseSeeder extends Seeder
             'code' => 'DEJAVU123'
         ]);
 
-        Concert::factory(10)->create();
+        // Concert::factory(10)->create();
     }
 }
