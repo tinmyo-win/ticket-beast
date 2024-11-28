@@ -11,6 +11,7 @@ use App\Models\Concert;
 use App\Models\Order;
 use App\Models\Reservation;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 class ConcertOrderController extends Controller
@@ -32,18 +33,22 @@ class ConcertOrderController extends Controller
         try {
 
             $reservation = $concert->reserveTickets(request('ticket_quantity'), request('email'));
-            
+
             $order = $reservation->complete($this->paymentGateway, request('payment_token'), $concert->user->stripe_account_id);
 
             Mail::to($order->email)->send(new OrderConfirmationEmail($order));
 
             $order = OrderResource::make($order);
             return response()->json($order, 201);
-            
+
         } catch (PaymentFailedException $e) {
             $reservation->cancel();
+            Log::info('Payment Failed');
+            Log::info($e->getMessage());
             return response()->json([], 422);
         } catch (NotEnoughTicketsException $e) {
+            Log::info('Not enought Token');
+            Log::info($e->getMessage());
             return response()->json([], 422);
         }
     }
